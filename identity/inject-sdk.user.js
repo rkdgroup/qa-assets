@@ -14,7 +14,6 @@
 (function() {
     'use strict';
 
-    // testing auto-update
     const sdkUrl = 'https://cdn.an-identity.website/demoorg2/5/js/latest-identity-sdk.js';
     if (!document.head) {
         console.error('[identity-sdk] document.head not found — script not injected');
