@@ -14,6 +14,9 @@
 (function() {
     'use strict';
 
+    const sdkUrl = 'https://cdn.an-identity.website/demoorg2/5/js/latest-identity-sdk.js';
+    const editorUrl = 'https://rkdgroup.github.io/qa-assets/identity/identity-profile-editor.js';
+
     const inject = (id, src) => {
         if (document.getElementById(id)) {
             console.warn('[identity-qa]', id, 'already present. skipping inject.');
@@ -40,15 +43,8 @@
         console.log('[identity-qa] injected', id, src);
     };
 
-    inject(
-        'cta-qa-test-script',
-        'https://cdn.an-identity.website/demoorg2/5/js/latest-identity-sdk.js'
-    );
-
-    inject(
-        'cta-qa-profile-editor',
-        'https://rkdgroup.github.io/qa-assets/identity/identity-profile-editor.js'
-    );
+    inject('cta-qa-test-script', sdkUrl);
+    inject('cta-qa-profile-editor', editorUrl);
 
     setTimeout(() => {
         if (!window.__identity) {
