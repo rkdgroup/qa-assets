@@ -7,39 +7,48 @@
 // @match        https://*/*
 // @icon         data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
 // @grant        none
-// @updateURL    https://github.com/rkdgroup/qa-assets/raw/refs/heads/itzjustalan-patch-1/identity/inject-sdk.user.js
-// @downloadURL  https://github.com/rkdgroup/qa-assets/raw/refs/heads/itzjustalan-patch-1/identity/inject-sdk.user.js
+// @updateURL    https://github.com/rkdgroup/qa-assets/raw/refs/heads/main/identity/inject-sdk.user.js
+// @downloadURL  https://github.com/rkdgroup/qa-assets/raw/refs/heads/main/identity/inject-sdk.user.js
 // ==/UserScript==
 
 (function() {
     'use strict';
 
-    const sdkUrl = 'https://cdn.an-identity.website/demoorg2/5/js/latest-identity-sdk.js';
-    if (!document.head) {
-        console.error('[identity-sdk] document.head not found — script not injected');
-        return;
-    }
+    const inject = (id, src) => {
+        if (document.getElementById(id)) {
+            console.warn('[identity-qa]', id, 'already present. skipping inject.');
+            return;
+            // document.getElementById(id).remove();
+            // console.warn('[identity-qa]', id, 'already present. removed element.');
+        }
 
-    const existing = document.getElementById('cta-qa-test-script');
-    if (existing) {
-        existing.remove();
-    }
+        if (!document.head) {
+            console.error('[identity-qa] document.head not found');
+            return;
+        }
 
+        const script = document.createElement('script');
+        script.id = id;
+        script.src = src;
+        script.async = true;
 
-    const script = document.createElement('script');
-    script.id = 'cta-qa-test-script';
-    script.src = sdkUrl;
-    script.async = true;
+        script.onerror = () => {
+            console.error(`[identity-qa] Failed to load ${src}`);
+        };
 
-    script.onerror = () => {
-        console.error(
-            `[identity-sdk] Script "${sdkUrl}" was blocked. ` +
-            'This is likely due to the site’s Content Security Policy (CSP).'
-        );
+        document.head.appendChild(script);
+        console.log('[identity-qa] injected', id, src);
     };
 
-    document.head.appendChild(script);
-    console.log('[identity-sdk] SDK injection attempted');
+    inject(
+        'cta-qa-test-script',
+        'https://cdn.an-identity.website/demoorg2/5/js/latest-identity-sdk.js'
+    );
+
+    inject(
+        'cta-qa-profile-editor',
+        'https://rkdgroup.github.io/qa-assets/identity/identity-profile-editor.js'
+    );
 
     setTimeout(() => {
         if (!window.__identity) {
