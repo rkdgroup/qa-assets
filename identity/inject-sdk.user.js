@@ -21,8 +21,6 @@
         if (document.getElementById(id)) {
             console.warn('[identity-qa]', id, 'already present. skipping inject.');
             return;
-            // document.getElementById(id).remove();
-            // console.warn('[identity-qa]', id, 'already present. removed element.');
         }
 
         if (!document.head) {
