@@ -41,14 +41,38 @@
         console.log('[identity-qa] injected', id, src);
     };
 
-    inject('cta-qa-test-script', sdkUrl);
-    inject('cta-qa-profile-editor', editorUrl);
+    const waitForIdentity = (onReady) => {
+        const startTime = Date.now();
+        const maxWaitMs = 10000;
+        const intervalMs = 100;
 
-    setTimeout(() => {
-        if (!window.__identity) {
-            console.warn('[identity-sdk] Script loaded but expected global not found');
-        } else {
-            console.log('[identity-sdk] Loaded successfully!', __identity);
-        }
-    }, 3000);
+        const check = () => {
+            if (
+                window.__identity &&
+                typeof window.__identity === 'object' &&
+                window.__identity.profile &&
+                window.__identity.ctasLoaded === true
+            ) {
+                console.log('[identity-qa] identity ready');
+                onReady();
+                return;
+            }
+
+            if (Date.now() - startTime > maxWaitMs) {
+                console.error('[identity-qa] identity not ready after timeout', window.__identity);
+                return;
+            }
+
+            setTimeout(check, intervalMs);
+        };
+
+        check();
+    };
+
+    inject('cta-qa-test-script', sdkUrl);
+
+    waitForIdentity(() => {
+        inject('cta-qa-profile-editor', editorUrl);
+    });
+
 })();
